@@ -42,6 +42,8 @@ class TvApp {
   }
 
   renderCards = shows => {
+    this.viewElems.showsWrapper.innerHTML = ""
+
    for (const { show } of shows) {
      this.createShowCard(show)
    }
@@ -49,11 +51,19 @@ class TvApp {
 
   createShowCard = show => {
     const divCard = createDOMElement('div', 'card')
-    const img = createDOMElement('img', 'card-img-top', null, show.image.medium)
     const cardBodyDiv = createDOMElement('div', 'card-body')
     const h5 = createDOMElement('h5', 'card-title', show.name)
-    const paragraph = createDOMElement('p', 'card-text', show.summary)
     const btn = createDOMElement('button', 'btn btn-primary', 'Show details')
+    let img, paragraph
+
+    show.image ? 
+    img = createDOMElement('img', 'card-img-top', null, show.image.medium) 
+    : img = createDOMElement('img', 'card-img-top', null, 'https://via.placeholder.com/250x350')
+
+    show.summary ? 
+    paragraph = createDOMElement('p', 'card-text', `${show.summary.replace(/<[^>]*>?/gm, '').slice(0, 100)}...`) 
+    : paragraph = createDOMElement('p', 'card-text', 'There is no summary for this show')
+
 
     divCard.appendChild(img)
     divCard.appendChild(cardBodyDiv)

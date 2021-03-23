@@ -2,12 +2,12 @@
   margin-top: 20px;
 }
 
-.card-wrapper {
+.shows-wrapper {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
 }
 
 .card {
- flex-basis: 25%;
+ width: 250px;
 }
