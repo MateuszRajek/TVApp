@@ -73,6 +73,7 @@ class TvApp {
     const divCard = createDOMElement('div', 'card')
     const cardBodyDiv = createDOMElement('div', 'card-body')
     const h5 = createDOMElement('h5', 'card-title', show.name)
+    const cardTextWrapper = createDOMElement('div', 'card-text-wrapper')
     let img, paragraph, btn
 
     if (show.image) {
@@ -110,13 +111,13 @@ class TvApp {
 
     divCard.appendChild(img)
     divCard.appendChild(cardBodyDiv)
-    cardBodyDiv.appendChild(h5)
-    cardBodyDiv.appendChild(paragraph)
+    cardBodyDiv.appendChild(cardTextWrapper)
+    cardTextWrapper.appendChild(h5)
+    cardTextWrapper.appendChild(paragraph)
     cardBodyDiv.appendChild(btn)
 
     return divCard
   }
-
 }
 
 document.addEventListener('DOMContentLoaded', new TvApp())
