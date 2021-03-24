@@ -1,5 +1,5 @@
 import { mapListToDOMElements, createDOMElement } from './DOMIntegration.js'
-import { getShowsByKey } from './requests.js'
+import { getShowsByKey, getShowsByID } from './requests.js'
 
 
 class TvApp {
@@ -38,32 +38,72 @@ class TvApp {
   }
 
   fetchAndDisplayShows = () => {
-    getShowsByKey(this.selectedName).then(shows => this.renderCards(shows))
+    getShowsByKey(this.selectedName).then(shows => this.renderCardsOnList(shows))
   }
 
-  renderCards = shows => {
+  renderCardsOnList = shows => {
     this.viewElems.showsWrapper.innerHTML = ""
+    Array.from(document.querySelectorAll('[data-show-id]')
+    ).forEach(btn => {
+      btn.removeEventListener('click', this.openDetailsView)
+    })
 
    for (const { show } of shows) {
-     this.createShowCard(show)
+     const card = this.createShowCard(show)
+     this.viewElems.showsWrapper.appendChild(card)
    }
   }
 
-  createShowCard = show => {
+  openDetailsView = event => {
+    const { showId } = event.target.dataset
+    getShowsByID(showId).then(show => {
+      const card = this.createShowCard(show, true)
+      this.viewElems.showPreview.appendChild(card)
+      this.viewElems.showPreview.style.display = 'flex'
+    })
+  }
+
+  closeDetailsView = event => {
+    const { showId } = event.target.dataset
+    const closeBtn = document.querySelector(`[id="showPreview"] [data-show-id="${showId}"]`)
+    closeBtn.removeEventListener('click', this.closeDetailsView)
+    this.viewElems.showPreview.style.display = 'none'
+    this.viewElems.showPreview.innerHTML = ''
+  }
+
+  createShowCard = (show, isDetailed )=> {
     const divCard = createDOMElement('div', 'card')
     const cardBodyDiv = createDOMElement('div', 'card-body')
     const h5 = createDOMElement('h5', 'card-title', show.name)
     const btn = createDOMElement('button', 'btn btn-primary', 'Show details')
     let img, paragraph
 
-    show.image ? 
-    img = createDOMElement('img', 'card-img-top', null, show.image.medium) 
-    : img = createDOMElement('img', 'card-img-top', null, 'https://via.placeholder.com/250x350')
+    if (show.image) {
+      if (isDetailed) {
+        img = createDOMElement('div', 'card-preview-bg') 
+        img.style.backgroundImage = `url('${show.image.original}')`
+      } else {
+        img = createDOMElement('img', 'card-img-top', null, show.image.medium) 
+    }} else {
+      img = createDOMElement('img', 'card-img-top', null, 'https://via.placeholder.com/250x350')
+    }
 
-    show.summary ? 
-    paragraph = createDOMElement('p', 'card-text', `${show.summary.replace(/<[^>]*>?/gm, '').slice(0, 100)}...`) 
-    : paragraph = createDOMElement('p', 'card-text', 'There is no summary for this show')
+    if (show.summary) {
+      if (isDetailed) {
+        paragraph = createDOMElement('p', 'card-text', show.summary.replace(/<[^>]*>?/gm, '')) 
+      } else {
+        paragraph = createDOMElement('p', 'card-text', `${show.summary.replace(/<[^>]*>?/gm, '').slice(0, 100)}...`) 
+      }} else {
+      paragraph = createDOMElement('p', 'card-text', 'There is no summary for this show')
+    }
 
+    btn.dataset.showId = show.id
+
+    if (isDetailed) {
+      btn.addEventListener('click', this.closeDetailsView)
+    } else {
+      btn.addEventListener('click', this.openDetailsView)
+    }
 
     divCard.appendChild(img)
     divCard.appendChild(cardBodyDiv)
@@ -71,7 +111,7 @@ class TvApp {
     cardBodyDiv.appendChild(paragraph)
     cardBodyDiv.appendChild(btn)
 
-    this.viewElems.showsWrapper.appendChild(divCard)
+    return divCard
   }
 
 }
