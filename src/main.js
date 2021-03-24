@@ -5,8 +5,7 @@ import { getShowsByKey, getShowsByID } from './requests.js'
 class TvApp {
   constructor() {
     this.viewElems = {}
-    this.showNameButtons = {}
-    this.selectedName = 'harry'
+    this.selectedName = 'show'
     this.initializeApp()
   }
 
@@ -18,25 +17,22 @@ class TvApp {
 
   connectDOMElements = () => {
     const listOfIds = Array.from(document.querySelectorAll('[id]')).map(elem => (elem.id))
-    const listOfshowNames = Array.from(
-      document.querySelectorAll('[data-show-name]')
-      ).map(elem => (elem.dataset.showName))
-
       this.viewElems = mapListToDOMElements(listOfIds, 'id')
-      this.showNameButtons = mapListToDOMElements(listOfshowNames, 'data-show-name')
   }
 
   setupListeners = () => {
-    Object.keys(this.showNameButtons).forEach(showName => {
-      this.showNameButtons[showName].addEventListener('click', this.setCurrentName)
-    })
+    this.viewElems.searchInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        this.fetchAndDisplayShows()
+    }})
+    this.viewElems.searchInput.addEventListener('input', this.setCurrentName)
+    this.viewElems.searchForShowsBtn.addEventListener('click', this.fetchAndDisplayShows)
   }
 
   setCurrentName = event => {
-    this.selectedName = event.target.dataset.showName
-    this.fetchAndDisplayShows()
+    this.selectedName = event.target.value
   }
-
+  
   fetchAndDisplayShows = () => {
     getShowsByKey(this.selectedName).then(shows => this.renderCardsOnList(shows))
   }

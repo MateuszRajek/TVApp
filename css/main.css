@@ -4,6 +4,12 @@ body {
 
 .search-bar {
   margin: 30px 0;
+  max-width: 1100px;
+  display: flex;
+}
+
+.form-control {
+  flex-basis: 70%;
 }
 
 .shows-wrapper {
