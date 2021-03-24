@@ -60,6 +60,7 @@ class TvApp {
       const card = this.createShowCard(show, true)
       this.viewElems.showPreview.appendChild(card)
       this.viewElems.showPreview.style.display = 'flex'
+      document.body.style.overflow = 'hidden'
     })
   }
 
@@ -69,14 +70,14 @@ class TvApp {
     closeBtn.removeEventListener('click', this.closeDetailsView)
     this.viewElems.showPreview.style.display = 'none'
     this.viewElems.showPreview.innerHTML = ''
+    document.body.style.overflow = 'visible'
   }
 
   createShowCard = (show, isDetailed )=> {
     const divCard = createDOMElement('div', 'card')
     const cardBodyDiv = createDOMElement('div', 'card-body')
     const h5 = createDOMElement('h5', 'card-title', show.name)
-    const btn = createDOMElement('button', 'btn btn-primary', 'Show details')
-    let img, paragraph
+    let img, paragraph, btn
 
     if (show.image) {
       if (isDetailed) {
@@ -95,6 +96,12 @@ class TvApp {
         paragraph = createDOMElement('p', 'card-text', `${show.summary.replace(/<[^>]*>?/gm, '').slice(0, 100)}...`) 
       }} else {
       paragraph = createDOMElement('p', 'card-text', 'There is no summary for this show')
+    }
+
+    if (isDetailed) {
+      btn = createDOMElement('button', 'btn btn-warning', 'Close details view')
+    } else {
+      btn = createDOMElement('button', 'btn btn-primary', 'Show details')
     }
 
     btn.dataset.showId = show.id
