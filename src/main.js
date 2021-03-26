@@ -56,6 +56,7 @@ class TvApp {
       const card = this.createShowCard(show, true)
       this.viewElems.showPreview.appendChild(card)
       this.viewElems.showPreview.style.display = 'flex'
+      this.viewElems.showsCover.style.display = 'block'
       document.body.style.overflow = 'hidden'
     })
   }
@@ -66,6 +67,7 @@ class TvApp {
     closeBtn.removeEventListener('click', this.closeDetailsView)
     this.viewElems.showPreview.style.display = 'none'
     this.viewElems.showPreview.innerHTML = ''
+    this.viewElems.showsCover.style.display = 'none'
     document.body.style.overflow = 'visible'
   }
 
